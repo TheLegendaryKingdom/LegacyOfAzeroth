@@ -18,6 +18,7 @@
 #include "Creature.h"
 #include "CreatureAI.h"
 #include "CreatureAIImpl.h"
+#include "CreatureGroups.h"
 #include "CreatureTextMgr.h"
 #include "Log.h"
 #include "MapReference.h"
@@ -292,7 +293,9 @@ bool CreatureAI::UpdateVictim()
 bool CreatureAI::_EnterEvadeMode()
 {
     if (!me->IsAlive())
+    {
         return false;
+    }
 
     // don't remove vehicle auras, passengers aren't supposed to drop off the vehicle
     // don't remove clone caster on evade (to be verified)
@@ -308,8 +311,15 @@ bool CreatureAI::_EnterEvadeMode()
     me->SetLastDamagedTime(0);
     me->SetCannotReachTarget(false);
 
+    if (CreatureGroup* formation = me->GetFormation())
+    {
+        formation->MemberEvaded(me);
+    }
+
     if (me->IsInEvadeMode())
+    {
         return false;
+    }
 
     return true;
 }
@@ -355,15 +365,13 @@ Creature* CreatureAI::DoSummon(uint32 entry, const Position& pos, uint32 despawn
 
 Creature* CreatureAI::DoSummon(uint32 entry, WorldObject* obj, float radius, uint32 despawnTime, TempSummonType summonType)
 {
-    Position pos;
-    obj->GetRandomNearPosition(pos, radius);
+    Position pos = obj->GetRandomNearPosition(radius);
     return me->SummonCreature(entry, pos, summonType, despawnTime);
 }
 
 Creature* CreatureAI::DoSummonFlyer(uint32 entry, WorldObject* obj, float flightZ, float radius, uint32 despawnTime, TempSummonType summonType)
 {
-    Position pos;
-    obj->GetRandomNearPosition(pos, radius);
+    Position pos = obj->GetRandomNearPosition(radius);
     pos.m_positionZ += flightZ;
     return me->SummonCreature(entry, pos, summonType, despawnTime);
 }
