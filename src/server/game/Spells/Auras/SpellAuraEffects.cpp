@@ -1879,22 +1879,22 @@ void AuraEffect::HandleAuraModShapeshift(AuraApplication const* aurApp, uint8 mo
         case FORM_SPIRITOFREDEMPTION:                       // 0x20
         case AVATAR_CROW_BLUECHILD:                         // 0x28
         case AVATAR_CROW_ANSHE:                             // 0x29
-        case AVATAR_BEAR_ELUNE_BLUE:                        // 0x30
-        case AVATAR_BEAR_ELUNE_GREEN:                       // 0x31
-        case AVATAR_BEAR_ELUNE_PURPLE:                      // 0x32
-        case AVATAR_BEAR_ELUNE_RED:                         // 0x33
-        case AVATAR_CAT_ELUNE_BLUE:                         // 0x34
-        case AVATAR_CAT_ELUNE_GREEN:                        // 0x35
-        case AVATAR_CAT_ELUNE_PURPLE:                       // 0x36
-        case AVATAR_CAT_ELUNE_RED:                          // 0x37
-        case AVATAR_BEAR_XAVIUS_BLUE:                       // 0x38
-        case AVATAR_BEAR_XAVIUS_BROWN:                      // 0x39
-        case AVATAR_BEAR_XAVIUS_GREEN:                      // 0x3A
-        case AVATAR_BEAR_XAVIUS_RED:                        // 0x3B
-        case AVATAR_CAT_XAVIUS_BLUE:                        // 0x3C
-        case AVATAR_CAT_XAVIUS_GREEN:                       // 0x3D
-        case AVATAR_CAT_XAVIUS_ORANGE:                      // 0x3E
-        case AVATAR_CAT_XAVIUS_RED:                         // 0x3F
+        case AVATAR_BEAR_ELUNE_BLUE:                        // 0x2A
+        case AVATAR_BEAR_ELUNE_GREEN:                       // 0x2B
+        case AVATAR_BEAR_ELUNE_PURPLE:                      // 0x2C
+        case AVATAR_BEAR_ELUNE_RED:                         // 0x2D
+        case AVATAR_CAT_ELUNE_BLUE:                         // 0x2E
+        case AVATAR_CAT_ELUNE_GREEN:                        // 0x2F
+        case AVATAR_CAT_ELUNE_PURPLE:                       // 0x30
+        case AVATAR_CAT_ELUNE_RED:                          // 0x31
+        case AVATAR_BEAR_XAVIUS_BLUE:                       // 0x32
+        case AVATAR_BEAR_XAVIUS_BROWN:                      // 0x33
+        case AVATAR_BEAR_XAVIUS_GREEN:                      // 0x34
+        case AVATAR_BEAR_XAVIUS_RED:                        // 0x35
+        case AVATAR_CAT_XAVIUS_BLUE:                        // 0x36
+        case AVATAR_CAT_XAVIUS_GREEN:                       // 0x37
+        case AVATAR_CAT_XAVIUS_ORANGE:                      // 0x38
+        case AVATAR_CAT_XAVIUS_RED:                         // 0x39
             break;
         default:
             LOG_ERROR("spells.aura.effect", "Auras: Unknown Shapeshift Type: %u", GetMiscValue());
