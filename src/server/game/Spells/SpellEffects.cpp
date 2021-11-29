@@ -682,6 +682,42 @@ void Spell::EffectSchoolDMG(SpellEffIndex effIndex)
 
 void Spell::EffectDummy(SpellEffIndex effIndex)
 {
+	switch (m_spellInfo->Id) //TLK (LoA) custom spells under dummy effect
+	{
+		case 81062: //En avant l'aventure ! (quitter l'introduction du Chevalier de la mort)
+		{
+			if( unitTarget && unitTarget->IsPlayer())
+			{					
+                Player* player = unitTarget->ToPlayer();
+				if (player->getClass() == CLASS_DEATH_KNIGHT)
+				{
+					if (player->GetTeamId() == TEAM_ALLIANCE)
+					{
+						if (player->GetQuestStatus(13188) == QUEST_STATUS_NONE)//Where Kings Walk
+						{
+							player->AddQuest(sObjectMgr->GetQuestTemplate(13188), nullptr);
+							player->RewardQuest(sObjectMgr->GetQuestTemplate(13188), false, player);
+						}					
+						player->TeleportTo(0, -8426.31f, 329.32f, 120.89f, 6.15f);//Stormwind
+						ObjectAccessor::SaveAllPlayers();//Save
+					}						
+					else
+					{
+						if (player->GetQuestStatus(13189) == QUEST_STATUS_NONE)//Saurfang's Blessing
+						{
+							player->AddQuest(sObjectMgr->GetQuestTemplate(13189), nullptr);  
+							player->RewardQuest(sObjectMgr->GetQuestTemplate(13189), false, player);
+						}
+						player->TeleportTo(1, 1907.91f, -4143.45f, 40.64f, 2.99f);//Orgrimmar
+						ObjectAccessor::SaveAllPlayers();//Save
+					}				
+				}				
+			}
+			return;
+		}
+		break;
+	}
+	
     if (effectHandleMode != SPELL_EFFECT_HANDLE_HIT_TARGET)
         return;
 
