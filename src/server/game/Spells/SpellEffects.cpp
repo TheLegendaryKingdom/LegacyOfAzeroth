@@ -696,8 +696,11 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
 						if (player->GetQuestStatus(13188) == QUEST_STATUS_NONE)//Where Kings Walk
 						{
 							player->AddQuest(sObjectMgr->GetQuestTemplate(13188), nullptr);
+						}
+                        if (player->GetQuestStatus(13188) != QUEST_STATUS_REWARDED)//Where Kings Walk
+						{
 							player->RewardQuest(sObjectMgr->GetQuestTemplate(13188), false, player);
-						}					
+						}						
 						player->TeleportTo(0, -8426.31f, 329.32f, 120.89f, 6.15f);//Stormwind
 						ObjectAccessor::SaveAllPlayers();//Save
 					}						
@@ -705,7 +708,10 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
 					{
 						if (player->GetQuestStatus(13189) == QUEST_STATUS_NONE)//Saurfang's Blessing
 						{
-							player->AddQuest(sObjectMgr->GetQuestTemplate(13189), nullptr);  
+							player->AddQuest(sObjectMgr->GetQuestTemplate(13189), nullptr);
+						}
+						if (player->GetQuestStatus(13189) != QUEST_STATUS_REWARDED)//Saurfang's Blessing
+						{
 							player->RewardQuest(sObjectMgr->GetQuestTemplate(13189), false, player);
 						}
 						player->TeleportTo(1, 1907.91f, -4143.45f, 40.64f, 2.99f);//Orgrimmar
