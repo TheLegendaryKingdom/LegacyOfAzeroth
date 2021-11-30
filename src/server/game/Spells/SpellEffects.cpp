@@ -695,6 +695,11 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                     {
                         player->SetLevel(58);
                     }
+					if (player->GetQuestStatus(30000) == QUEST_STATUS_NONE)//Where Kings Walk
+					{
+						player->AddQuest(sObjectMgr->GetQuestTemplate(30000), nullptr);
+						player->CompleteQuest(30000);
+					}
 					if (player->GetTeamId() == TEAM_ALLIANCE)
 					{
 						if (player->GetQuestStatus(13188) == QUEST_STATUS_NONE)//Where Kings Walk
