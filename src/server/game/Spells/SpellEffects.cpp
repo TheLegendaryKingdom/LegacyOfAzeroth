@@ -691,6 +691,10 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                 Player* player = unitTarget->ToPlayer();
 				if (player->getClass() == CLASS_DEATH_KNIGHT)
 				{
+					if (player->getLevel() < 58)
+                    {
+                        player->SetLevel(58);
+                    }
 					if (player->GetTeamId() == TEAM_ALLIANCE)
 					{
 						if (player->GetQuestStatus(13188) == QUEST_STATUS_NONE)//Where Kings Walk
