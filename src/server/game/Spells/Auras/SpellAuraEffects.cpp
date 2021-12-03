@@ -2899,6 +2899,30 @@ void AuraEffect::HandleAuraAllowFlight(AuraApplication const* aurApp, uint8 mode
         return;
 
     Unit* target = aurApp->GetTarget();
+	
+	switch (m_spellInfo->Id) //TLK (LoA) custom flying avatar spells <- these spells should not apply flying aura where it is not allowed
+	{
+		case 81029: //Avatar de l'Enfant bleu
+		case 81034: //Avatar d'An'she
+		{
+			if( target && target->IsPlayer())
+			{					
+                Player* player = target->ToPlayer();
+				AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(player->GetAreaId());
+                if (!areaEntry)
+                {
+                    areaEntry = sAreaTableStore.LookupEntry(player->GetMapId());
+                }
+
+                if (apply && (!areaEntry || !areaEntry->IsFlyable() || (areaEntry->flags & AREA_FLAG_NO_FLY_ZONE) != 0 || !player->canFlyInZone(player->GetAreaId(), player->GetMapId(), m_spellInfo)))
+                {
+                    return;
+                }
+			}
+		}
+		break;
+	}		
+		
 
     if (!apply)
     {
@@ -3311,6 +3335,28 @@ void AuraEffect::HandleAuraModIncreaseFlightSpeed(AuraApplication const* aurApp,
     //! Update ability to fly
     if (GetAuraType() == SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED)
     {
+		switch (m_spellInfo->Id) //TLK (LoA) custom flying mount spell <- this spell should not apply flying aura where it is not allowed
+		{
+			case 81007: //Fusée de tourisme X-53 (TLK version +100%gs/+310%fs)
+			{
+				if( target && target->IsPlayer())
+				{					
+					Player* player = target->ToPlayer();
+					AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(player->GetAreaId());
+					if (!areaEntry)
+					{
+						areaEntry = sAreaTableStore.LookupEntry(player->GetMapId());
+					}
+
+					if (apply && (!areaEntry || !areaEntry->IsFlyable() || (areaEntry->flags & AREA_FLAG_NO_FLY_ZONE) != 0 || !player->canFlyInZone(player->GetAreaId(), player->GetMapId(), m_spellInfo)))
+					{
+						return;
+					}
+				}
+			}
+			break;
+		}
+		
         // do not remove unit flag if there are more than this auraEffect of that kind on unit on unit
         if (mode & AURA_EFFECT_HANDLE_SEND_FOR_CLIENT_MASK && (apply || (!target->HasAuraType(SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED) && !target->HasAuraType(SPELL_AURA_FLY))))
         {

@@ -684,7 +684,7 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
 {
 	switch (m_spellInfo->Id) //TLK (LoA) custom spells under dummy effect
 	{
-		case 81062: //En avant l'aventure ! (quitter l'introduction du Chevalier de la mort)
+		case 81000: //En avant l'aventure ! (quitter l'introduction du Chevalier de la mort)
 		{
 			if( unitTarget && unitTarget->IsPlayer())
 			{					
