@@ -1364,8 +1364,14 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
         RemoveAurasByType(SPELL_AURA_MOD_ROOT);
     }
 	
-	//RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_TELEPORTED);
-
+	// TLK: Remove flying avatars/mount spells if aura is applied to avoid player getting to a no-flying zone with fly aura
+	if (HasAura(81007))
+	    RemoveAurasDueToSpell(81007);
+	if (HasAura(81029))
+	    RemoveAurasDueToSpell(81029);
+	if (HasAura(81034))
+	    RemoveAurasDueToSpell(81034);
+	
     if (m_transport)
     {
         if (options & TELE_TO_NOT_LEAVE_TRANSPORT)
