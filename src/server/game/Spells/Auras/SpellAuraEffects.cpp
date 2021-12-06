@@ -2896,7 +2896,7 @@ void AuraEffect::HandleAuraAllowFlight(AuraApplication const* aurApp, uint8 mode
 
     Unit* target = aurApp->GetTarget();
 	
-	switch (m_spellInfo->Id) //TLK (LoA) custom flying avatar spells <- these spells should not apply flying aura where it is not allowed
+	switch (m_spellInfo->Id) //TLK: custom flying avatar spells should not apply flying aura when not allowed by map/context
 	{
 		case 81029: //Avatar de l'Enfant bleu
 		case 81034: //Avatar d'An'she
@@ -2906,21 +2906,15 @@ void AuraEffect::HandleAuraAllowFlight(AuraApplication const* aurApp, uint8 mode
                 Player* player = target->ToPlayer();
 				AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(player->GetAreaId());
                 if (!areaEntry)
-                {
-                    areaEntry = sAreaTableStore.LookupEntry(player->GetMapId());
-                }
-
+					areaEntry = sAreaTableStore.LookupEntry(player->GetMapId());
                 if (apply && (!areaEntry || !areaEntry->IsFlyable() || (areaEntry->flags & AREA_FLAG_NO_FLY_ZONE) != 0 || !player->canFlyInZone(player->GetAreaId(), player->GetMapId(), m_spellInfo)))
-                {
                     return;
-                }
 			}
 		}
 		break;
-	}		
-		
-
-    if (!apply)
+	}
+	
+	if (!apply)
     {
         // do not remove unit flag if there are more than this auraEffect of that kind on unit on unit
         if (target->HasAuraType(GetAuraType()) || target->HasAuraType(SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED))
@@ -3331,23 +3325,18 @@ void AuraEffect::HandleAuraModIncreaseFlightSpeed(AuraApplication const* aurApp,
     //! Update ability to fly
     if (GetAuraType() == SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED)
     {
-		switch (m_spellInfo->Id) //TLK (LoA) custom flying mount spell <- this spell should not apply flying aura where it is not allowed
+		switch (m_spellInfo->Id) //TLK: custom flying mount spells should not apply flying aura when not allowed by map/context
 		{
-			case 81007: //Fusée de tourisme X-53 (TLK version +100%gs/+310%fs)
+			case 81007: // TLK: Fusée de tourisme X-53 should not apply flying aura when not allowed by the
 			{
 				if( target && target->IsPlayer())
 				{					
 					Player* player = target->ToPlayer();
 					AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(player->GetAreaId());
 					if (!areaEntry)
-					{
 						areaEntry = sAreaTableStore.LookupEntry(player->GetMapId());
-					}
-
 					if (apply && (!areaEntry || !areaEntry->IsFlyable() || (areaEntry->flags & AREA_FLAG_NO_FLY_ZONE) != 0 || !player->canFlyInZone(player->GetAreaId(), player->GetMapId(), m_spellInfo)))
-					{
 						return;
-					}
 				}
 			}
 			break;
