@@ -2896,23 +2896,37 @@ void AuraEffect::HandleAuraAllowFlight(AuraApplication const* aurApp, uint8 mode
 
     Unit* target = aurApp->GetTarget();
 	
-	switch (m_spellInfo->Id) //TLK: custom flying avatar spells should not apply flying aura when not allowed by map/context
-	{
-		case 81029: //Avatar de l'Enfant bleu
-		case 81034: //Avatar d'An'she
-		{
-			if( target && target->IsPlayer())
-			{					
-                Player* player = target->ToPlayer();
-				AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(player->GetAreaId());
-                if (!areaEntry)
-					areaEntry = sAreaTableStore.LookupEntry(player->GetMapId());
-                if (apply && (!areaEntry || !areaEntry->IsFlyable() || (areaEntry->flags & AREA_FLAG_NO_FLY_ZONE) != 0 || !player->canFlyInZone(player->GetAreaId(), player->GetMapId(), m_spellInfo)))
-                    return;
-			}
-		}
-		break;
+	//TLK: handle all custom spells and skip if not allowed to fly there
+	if( m_spellInfo->Id >= 81000 && target && target->IsPlayer())
+	{					
+		Player* player = target->ToPlayer();
+		AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(player->GetAreaId());
+		if (!areaEntry)
+			areaEntry = sAreaTableStore.LookupEntry(player->GetMapId());
+		if (apply && (!areaEntry || !areaEntry->IsFlyable() || (areaEntry->flags & AREA_FLAG_NO_FLY_ZONE) != 0 || !player->canFlyInZone(player->GetAreaId(), player->GetMapId(), m_spellInfo)))
+			return;
 	}
+	/*else if( target && target->IsPlayer())
+	{
+		//Select specific spells
+		switch (m_spellInfo->Id)
+		{
+			case 81029: //Avatar de l'Enfant bleu
+			case 81034: //Avatar d'An'she
+			{
+				if( target && target->IsPlayer())
+				{					
+					Player* player = target->ToPlayer();
+					AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(player->GetAreaId());
+					if (!areaEntry)
+						areaEntry = sAreaTableStore.LookupEntry(player->GetMapId());
+					if (apply && (!areaEntry || !areaEntry->IsFlyable() || (areaEntry->flags & AREA_FLAG_NO_FLY_ZONE) != 0 || !player->canFlyInZone(player->GetAreaId(), player->GetMapId(), m_spellInfo)))
+						return;
+				}
+			}
+			break;
+		}
+	}*/
 	
 	if (!apply)
     {
@@ -3325,22 +3339,37 @@ void AuraEffect::HandleAuraModIncreaseFlightSpeed(AuraApplication const* aurApp,
     //! Update ability to fly
     if (GetAuraType() == SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED)
     {
-		switch (m_spellInfo->Id) //TLK: custom flying mount spells should not apply flying aura when not allowed by map/context
-		{
-			case 81007: // TLK: Fusée de tourisme X-53 should not apply flying aura when not allowed by the
-			{
-				if( target && target->IsPlayer())
-				{					
-					Player* player = target->ToPlayer();
-					AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(player->GetAreaId());
-					if (!areaEntry)
-						areaEntry = sAreaTableStore.LookupEntry(player->GetMapId());
-					if (apply && (!areaEntry || !areaEntry->IsFlyable() || (areaEntry->flags & AREA_FLAG_NO_FLY_ZONE) != 0 || !player->canFlyInZone(player->GetAreaId(), player->GetMapId(), m_spellInfo)))
-						return;
-				}
-			}
-			break;
+		//TLK: handle all custom spells and skip if not allowed to fly there 
+		if( m_spellInfo->Id >= 81000 && target && target->IsPlayer())
+		{					
+			Player* player = target->ToPlayer();
+			AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(player->GetAreaId());
+			if (!areaEntry)
+				areaEntry = sAreaTableStore.LookupEntry(player->GetMapId());
+			if (apply && (!areaEntry || !areaEntry->IsFlyable() || (areaEntry->flags & AREA_FLAG_NO_FLY_ZONE) != 0 || !player->canFlyInZone(player->GetAreaId(), player->GetMapId(), m_spellInfo)))
+				return;
 		}
+		/*else if( m_spellInfo->Id >= 81000 && target && target->IsPlayer())
+		{
+			//Select specific spells
+			switch (m_spellInfo->Id)
+			{
+				case 81007: // Fusée de tourisme X-53
+				case 81072: // Fusée-de-néant X-51 X-TREME
+				{
+					if( target && target->IsPlayer())
+					{					
+						Player* player = target->ToPlayer();
+						AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(player->GetAreaId());
+						if (!areaEntry)
+							areaEntry = sAreaTableStore.LookupEntry(player->GetMapId());
+						if (apply && (!areaEntry || !areaEntry->IsFlyable() || (areaEntry->flags & AREA_FLAG_NO_FLY_ZONE) != 0 || !player->canFlyInZone(player->GetAreaId(), player->GetMapId(), m_spellInfo)))
+							return;
+					}
+				}
+				break;
+			}
+		}*/
 		
         // do not remove unit flag if there are more than this auraEffect of that kind on unit on unit
         if (mode & AURA_EFFECT_HANDLE_SEND_FOR_CLIENT_MASK && (apply || (!target->HasAuraType(SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED) && !target->HasAuraType(SPELL_AURA_FLY))))
