@@ -1363,15 +1363,7 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
         RemoveAurasByType(SPELL_AURA_MOD_CONFUSE);
         RemoveAurasByType(SPELL_AURA_MOD_ROOT);
     }
-	
-	// TLK: Remove flying avatars/mount spells if aura is applied to avoid player getting to a no-flying zone with fly aura
-	if (HasAura(81007))
-	    RemoveAurasDueToSpell(81007);
-	if (HasAura(81029))
-	    RemoveAurasDueToSpell(81029);
-	if (HasAura(81034))
-	    RemoveAurasDueToSpell(81034);
-	
+
     if (m_transport)
     {
         if (options & TELE_TO_NOT_LEAVE_TRANSPORT)
@@ -1424,6 +1416,9 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
 
         if (!(options & TELE_TO_NOT_LEAVE_COMBAT))
             CombatStop();
+
+        //remove auras before teleporting...
+        RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_TELEPORTED | AURA_INTERRUPT_FLAG_MOVE | AURA_INTERRUPT_FLAG_TURNING);
 
         // this will be used instead of the current location in SaveToDB
         teleportStore_dest = WorldLocation(mapid, x, y, z, orientation);
@@ -1502,7 +1497,7 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
                     InterruptNonMeleeSpells(true);
 
             //remove auras before removing from map...
-            RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_CHANGE_MAP | AURA_INTERRUPT_FLAG_MOVE | AURA_INTERRUPT_FLAG_TURNING);
+            RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_CHANGE_MAP | AURA_INTERRUPT_FLAG_TELEPORTED | AURA_INTERRUPT_FLAG_MOVE | AURA_INTERRUPT_FLAG_TURNING);
 
             if (!GetSession()->PlayerLogout())
             {
