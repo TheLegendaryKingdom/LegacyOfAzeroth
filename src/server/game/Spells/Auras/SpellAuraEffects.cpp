@@ -2897,7 +2897,7 @@ void AuraEffect::HandleAuraAllowFlight(AuraApplication const* aurApp, uint8 mode
     Unit* target = aurApp->GetTarget();
 	
 	//TLK: handle all custom spells and skip if not allowed to fly there
-	if( m_spellInfo->Id >= 81000 && target && target->IsPlayer())
+	if( m_spellInfo->Id == 81073 && target && target->IsPlayer())
 	{					
 		Player* player = target->ToPlayer();
 		AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(player->GetAreaId());
@@ -3340,7 +3340,7 @@ void AuraEffect::HandleAuraModIncreaseFlightSpeed(AuraApplication const* aurApp,
     if (GetAuraType() == SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED)
     {
 		//TLK: handle all custom spells and skip if not allowed to fly there 
-		if( m_spellInfo->Id >= 81000 && target && target->IsPlayer())
+		if( m_spellInfo->Id == 81074 && target && target->IsPlayer())
 		{					
 			Player* player = target->ToPlayer();
 			AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(player->GetAreaId());
