@@ -505,7 +505,12 @@ void World::LoadConfigSettings(bool reload)
     rate_values[RATE_DROP_MONEY]                  = sConfigMgr->GetOption<float>("Rate.Drop.Money", 1.0f);
     rate_values[RATE_REWARD_BONUS_MONEY]          = sConfigMgr->GetOption<float>("Rate.RewardBonusMoney", 1.0f);
     rate_values[RATE_XP_KILL]                     = sConfigMgr->GetOption<float>("Rate.XP.Kill", 1.0f);
-    rate_values[RATE_XP_BG_KILL]                  = sConfigMgr->GetOption<float>("Rate.XP.BattlegroundKill", 1.0f);
+    rate_values[RATE_XP_BG_KILL_AV]               = sConfigMgr->GetOption<float>("Rate.XP.BattlegroundKillAV", 1.0f);
+    rate_values[RATE_XP_BG_KILL_WSG]              = sConfigMgr->GetOption<float>("Rate.XP.BattlegroundKillWSG", 1.0f);
+    rate_values[RATE_XP_BG_KILL_AB]               = sConfigMgr->GetOption<float>("Rate.XP.BattlegroundKillAB", 1.0f);
+    rate_values[RATE_XP_BG_KILL_EOTS]             = sConfigMgr->GetOption<float>("Rate.XP.BattlegroundKillEOTS", 1.0f);
+    rate_values[RATE_XP_BG_KILL_SOTA]             = sConfigMgr->GetOption<float>("Rate.XP.BattlegroundKillSOTA", 1.0f);
+    rate_values[RATE_XP_BG_KILL_IC]               = sConfigMgr->GetOption<float>("Rate.XP.BattlegroundKillIC", 1.0f);
     rate_values[RATE_XP_QUEST]                    = sConfigMgr->GetOption<float>("Rate.XP.Quest", 1.0f);
     rate_values[RATE_XP_QUEST_DF]                 = sConfigMgr->GetOption<float>("Rate.XP.Quest.DF", 1.0f);
     rate_values[RATE_XP_EXPLORE]                  = sConfigMgr->GetOption<float>("Rate.XP.Explore", 1.0f);
@@ -567,8 +572,9 @@ void World::LoadConfigSettings(bool reload)
     rate_values[RATE_ARENA_POINTS]                         = sConfigMgr->GetOption<float>("Rate.ArenaPoints", 1.0f);
     rate_values[RATE_INSTANCE_RESET_TIME]                  = sConfigMgr->GetOption<float>("Rate.InstanceResetTime", 1.0f);
 
-    rate_values[RATE_MISS_CHANCE_MULTIPLIER_TARGET_CREATURE] = sConfigMgr->GetOption<float>("Rate.MissChanceMultiplier.TargetCreature", 11.0f);
-    rate_values[RATE_MISS_CHANCE_MULTIPLIER_TARGET_PLAYER]   = sConfigMgr->GetOption<float>("Rate.MissChanceMultiplier.TargetPlayer", 7.0f);
+    rate_values[RATE_MISS_CHANCE_MULTIPLIER_TARGET_CREATURE]       = sConfigMgr->GetOption<float>("Rate.MissChanceMultiplier.TargetCreature", 11.0f);
+    rate_values[RATE_MISS_CHANCE_MULTIPLIER_TARGET_PLAYER]         = sConfigMgr->GetOption<float>("Rate.MissChanceMultiplier.TargetPlayer", 7.0f);
+    m_bool_configs[CONFIG_MISS_CHANCE_MULTIPLIER_ONLY_FOR_PLAYERS] = sConfigMgr->GetOption<bool>("Rate.MissChanceMultiplier.OnlyAffectsPlayer", false);
 
     rate_values[RATE_TALENT]                               = sConfigMgr->GetOption<float>("Rate.Talent", 1.0f);
     if (rate_values[RATE_TALENT] < 0.0f)
@@ -1731,6 +1737,11 @@ void World::SetInitialWorldSettings()
 
     LOG_INFO("server.loading", "Loading Quests Starters and Enders...");
     sObjectMgr->LoadQuestStartersAndEnders();                    // must be after quest load
+
+    LOG_INFO("server.loading", "Loading Quest Greetings...");
+    sObjectMgr->LoadQuestGreetings();                               // must be loaded after creature_template, gameobject_template tables
+    LOG_INFO("server.loading", "Loading Quest Greeting Locales...");
+    sObjectMgr->LoadQuestGreetingsLocales();                        // must be loaded after creature_template, gameobject_template tables
 
     LOG_INFO("server.loading", "Loading Quest Money Rewards...");
     sObjectMgr->LoadQuestMoneyRewards();
