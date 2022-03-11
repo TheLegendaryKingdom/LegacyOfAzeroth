@@ -2919,7 +2919,10 @@ void AuraEffect::HandleAuraAllowFlight(AuraApplication const* aurApp, uint8 mode
                 if (!areaEntry)
                     areaEntry = sAreaTableStore.LookupEntry(player->GetMapId());
                 if (apply && (!areaEntry || !areaEntry->IsFlyable() || (areaEntry->flags & AREA_FLAG_NO_FLY_ZONE) != 0 || !player->canFlyInZone(player->GetAreaId(), player->GetMapId(), m_spellInfo)))
-                    return;
+                {
+                    apply = !apply;
+                    player->RemoveAurasDueToSpell(m_spellInfo->Id);
+                }                
             }
         }
         break;
@@ -3348,7 +3351,10 @@ void AuraEffect::HandleAuraModIncreaseFlightSpeed(AuraApplication const* aurApp,
                     if (!areaEntry)
                         areaEntry = sAreaTableStore.LookupEntry(player->GetMapId());
                     if (apply && (!areaEntry || !areaEntry->IsFlyable() || (areaEntry->flags & AREA_FLAG_NO_FLY_ZONE) != 0 || !player->canFlyInZone(player->GetAreaId(), player->GetMapId(), m_spellInfo)))
-                        return;
+                    {
+                        apply = !apply;
+                        player->RemoveAurasDueToSpell(m_spellInfo->Id);
+                    }
                 }
             }
             break;
