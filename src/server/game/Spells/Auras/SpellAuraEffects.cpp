@@ -2912,7 +2912,7 @@ void AuraEffect::HandleAuraAllowFlight(AuraApplication const* aurApp, uint8 mode
     {
         case 81073: //Avatar volant
         {
-            if( target && target->IsPlayer())
+            if (target && target->IsPlayer())
             {					
                 Player* player = target->ToPlayer();
                 AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(player->GetAreaId());
@@ -3341,7 +3341,7 @@ void AuraEffect::HandleAuraModIncreaseFlightSpeed(AuraApplication const* aurApp,
         {
             case 81074: //Monture volante
             {
-                if( target && target->IsPlayer())
+                if (target && target->IsPlayer())
                 {					
                     Player* player = target->ToPlayer();
                     AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(player->GetAreaId());
