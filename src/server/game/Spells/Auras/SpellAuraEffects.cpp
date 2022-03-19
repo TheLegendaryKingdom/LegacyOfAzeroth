@@ -2918,6 +2918,7 @@ void AuraEffect::HandleAuraAllowFlight(AuraApplication const* aurApp, uint8 mode
     switch (m_spellInfo->Id)
     {
         case 81073: //Avatar volant
+        case 81074: //Monture volante
         {
             if (target && target->IsPlayer())
             {					
@@ -3346,28 +3347,7 @@ void AuraEffect::HandleAuraModIncreaseFlightSpeed(AuraApplication const* aurApp,
     //! Update ability to fly
     if (GetAuraType() == SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED)
     {
-		//TLK: handle all custom spells and skip if not allowed to fly there 
-		switch (m_spellInfo->Id)
-        {
-            case 81074: //Monture volante
-            {
-                if (target && target->IsPlayer())
-                {					
-                    Player* player = target->ToPlayer();
-                    AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(player->GetAreaId());
-                    if (!areaEntry)
-                        areaEntry = sAreaTableStore.LookupEntry(player->GetMapId());
-                    if (apply && (!areaEntry || !areaEntry->IsFlyable() || (areaEntry->flags & AREA_FLAG_NO_FLY_ZONE) != 0 || !player->canFlyInZone(player->GetAreaId(), player->GetMapId(), m_spellInfo)))
-                    {
-                        apply = !apply;
-                        player->RemoveAurasDueToSpell(m_spellInfo->Id);
-                    }
-                }
-            }
-            break;
-        }
-		
-        // do not remove unit flag if there are more than this auraEffect of that kind on unit on unit
+		// do not remove unit flag if there are more than this auraEffect of that kind on unit on unit
         if (mode & AURA_EFFECT_HANDLE_SEND_FOR_CLIENT_MASK && (apply || (!target->HasAuraType(SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED) && !target->HasAuraType(SPELL_AURA_FLY))))
         {
             target->SetCanFly(apply);
