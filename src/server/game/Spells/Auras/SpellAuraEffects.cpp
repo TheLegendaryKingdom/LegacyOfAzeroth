@@ -892,9 +892,16 @@ void AuraEffect::Update(uint32 diff, Unit* caster)
 {
     if (m_isPeriodic && (GetBase()->GetDuration() >= 0 || GetBase()->IsPassive() || GetBase()->IsPermanent()))
     {
+        uint32 totalTicks = GetTotalTicks();
+
         m_periodicTimer -= int32(diff);
         while (m_periodicTimer <= 0)
         {
+            if (!GetBase()->IsPermanent() && (m_tickNumber + 1) > totalTicks)
+            {
+                break;
+            }
+
             ++m_tickNumber;
 
             // update before tick (aura can be removed in TriggerSpell or PeriodicTick calls)
@@ -2907,25 +2914,18 @@ void AuraEffect::HandleAuraAllowFlight(AuraApplication const* aurApp, uint8 mode
 
     Unit* target = aurApp->GetTarget();
 	
-	//TLK: handle all custom spells and skip if not allowed to fly there
-    switch (m_spellInfo->Id)
-    {
-        case 81073: //Avatar volant
+	//TLK: handle custom aura for flying avatars
+    if (m_spellInfo->Id == 81073 && target && target->IsPlayer())
+    {					
+        Player* player = target->ToPlayer();
+        AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(player->GetAreaId());
+        if (!areaEntry)
+            areaEntry = sAreaTableStore.LookupEntry(player->GetMapId());
+        if (apply && (!areaEntry || !areaEntry->IsFlyable() || (areaEntry->flags & AREA_FLAG_NO_FLY_ZONE) != 0 || !player->canFlyInZone(player->GetAreaId(), player->GetMapId(), m_spellInfo)))
         {
-            if (target && target->IsPlayer())
-            {					
-                Player* player = target->ToPlayer();
-                AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(player->GetAreaId());
-                if (!areaEntry)
-                    areaEntry = sAreaTableStore.LookupEntry(player->GetMapId());
-                if (apply && (!areaEntry || !areaEntry->IsFlyable() || (areaEntry->flags & AREA_FLAG_NO_FLY_ZONE) != 0 || !player->canFlyInZone(player->GetAreaId(), player->GetMapId(), m_spellInfo)))
-                {
-                    apply = !apply;
-                    player->RemoveAurasDueToSpell(m_spellInfo->Id);
-                }                
-            }
-        }
-        break;
+            apply = !apply;
+            player->RemoveAurasDueToSpell(m_spellInfo->Id);
+        }                
     }
 	
 	if (!apply)
@@ -3339,28 +3339,7 @@ void AuraEffect::HandleAuraModIncreaseFlightSpeed(AuraApplication const* aurApp,
     //! Update ability to fly
     if (GetAuraType() == SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED)
     {
-		//TLK: handle all custom spells and skip if not allowed to fly there 
-		switch (m_spellInfo->Id)
-        {
-            case 81074: //Monture volante
-            {
-                if (target && target->IsPlayer())
-                {					
-                    Player* player = target->ToPlayer();
-                    AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(player->GetAreaId());
-                    if (!areaEntry)
-                        areaEntry = sAreaTableStore.LookupEntry(player->GetMapId());
-                    if (apply && (!areaEntry || !areaEntry->IsFlyable() || (areaEntry->flags & AREA_FLAG_NO_FLY_ZONE) != 0 || !player->canFlyInZone(player->GetAreaId(), player->GetMapId(), m_spellInfo)))
-                    {
-                        apply = !apply;
-                        player->RemoveAurasDueToSpell(m_spellInfo->Id);
-                    }
-                }
-            }
-            break;
-        }
-		
-        // do not remove unit flag if there are more than this auraEffect of that kind on unit on unit
+		// do not remove unit flag if there are more than this auraEffect of that kind on unit on unit
         if (mode & AURA_EFFECT_HANDLE_SEND_FOR_CLIENT_MASK && (apply || (!target->HasAuraType(SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED) && !target->HasAuraType(SPELL_AURA_FLY))))
         {
             target->SetCanFly(apply);
@@ -7052,4 +7031,20 @@ void AuraEffect::HandleRaidProcFromChargeWithValueAuraProc(AuraApplication* aurA
 
     LOG_DEBUG("spells.aura", "AuraEffect::HandleRaidProcFromChargeWithValueAuraProc: Triggering spell {} from aura {} proc", triggerSpellId, GetId());
     target->CastCustomSpell(target, triggerSpellId, &value, nullptr, nullptr, true, nullptr, this, GetCasterGUID());
+}
+
+int32 AuraEffect::GetTotalTicks() const
+{
+    uint32 totalTicks = 1;
+    if (m_amplitude)
+    {
+        totalTicks = GetBase()->GetMaxDuration() / m_amplitude;
+
+        if (m_spellInfo->HasAttribute(SPELL_ATTR5_EXTRA_INITIAL_PERIOD))
+        {
+            ++totalTicks;
+        }
+    }
+
+    return totalTicks;
 }
