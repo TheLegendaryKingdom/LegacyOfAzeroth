@@ -2914,26 +2914,18 @@ void AuraEffect::HandleAuraAllowFlight(AuraApplication const* aurApp, uint8 mode
 
     Unit* target = aurApp->GetTarget();
 	
-	//TLK: handle all custom spells and skip if not allowed to fly there
-    switch (m_spellInfo->Id)
-    {
-        case 81073: //Avatar volant
-        case 81074: //Monture volante
+	//TLK: handle custom aura for flying avatars
+    if (m_spellInfo->Id == 81073 && target && target->IsPlayer())
+    {					
+        Player* player = target->ToPlayer();
+        AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(player->GetAreaId());
+        if (!areaEntry)
+            areaEntry = sAreaTableStore.LookupEntry(player->GetMapId());
+        if (apply && (!areaEntry || !areaEntry->IsFlyable() || (areaEntry->flags & AREA_FLAG_NO_FLY_ZONE) != 0 || !player->canFlyInZone(player->GetAreaId(), player->GetMapId(), m_spellInfo)))
         {
-            if (target && target->IsPlayer())
-            {					
-                Player* player = target->ToPlayer();
-                AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(player->GetAreaId());
-                if (!areaEntry)
-                    areaEntry = sAreaTableStore.LookupEntry(player->GetMapId());
-                if (apply && (!areaEntry || !areaEntry->IsFlyable() || (areaEntry->flags & AREA_FLAG_NO_FLY_ZONE) != 0 || !player->canFlyInZone(player->GetAreaId(), player->GetMapId(), m_spellInfo)))
-                {
-                    apply = !apply;
-                    player->RemoveAurasDueToSpell(m_spellInfo->Id);
-                }                
-            }
-        }
-        break;
+            apply = !apply;
+            player->RemoveAurasDueToSpell(m_spellInfo->Id);
+        }                
     }
 	
 	if (!apply)
