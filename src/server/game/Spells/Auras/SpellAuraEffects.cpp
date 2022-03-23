@@ -1891,24 +1891,6 @@ void AuraEffect::HandleAuraModShapeshift(AuraApplication const* aurApp, uint8 mo
         case FORM_STEALTH:                                  // 0x1E
         case FORM_MOONKIN:                                  // 0x1F
         case FORM_SPIRITOFREDEMPTION:                       // 0x20
-        case AVATAR_BLUECHILD:                              // 0x28
-        case AVATAR_ANSHE:                                  // 0x29
-        case AVATAR_URSOC_BLUE:                             // 0x2A
-        case AVATAR_URSOC_GREEN:                            // 0x2B
-        case AVATAR_URSOC_PURPLE:                           // 0x2C
-        case AVATAR_URSOC_RED:                              // 0x2D
-        case AVATAR_ASHAMANE_BLUE:                          // 0x2E
-        case AVATAR_ASHAMANE_GREEN:                         // 0x2F
-        case AVATAR_ASHAMANE_PURPLE:                        // 0x30
-        case AVATAR_ASHAMANE_RED:                           // 0x31
-        case AVATAR_URSOC_CORRUPTED_BLUE:                   // 0x32
-        case AVATAR_URSOC_CORRUPTED_BROWN:                  // 0x33
-        case AVATAR_URSOC_CORRUPTED_GREEN:                  // 0x34
-        case AVATAR_URSOC_CORRUPTED_RED:                    // 0x35
-        case AVATAR_ASHAMANE_CORRUPTED_BLUE:                // 0x36
-        case AVATAR_ASHAMANE_CORRUPTED_GREEN:               // 0x37
-        case AVATAR_ASHAMANE_CORRUPTED_ORANGE:              // 0x38
-        case AVATAR_ASHAMANE_CORRUPTED_RED:                 // 0x39
             break;
         default:
             LOG_ERROR("spells.aura.effect", "Auras: Unknown Shapeshift Type: {}", GetMiscValue());
@@ -2913,22 +2895,8 @@ void AuraEffect::HandleAuraAllowFlight(AuraApplication const* aurApp, uint8 mode
         return;
 
     Unit* target = aurApp->GetTarget();
-	
-	//TLK: handle custom aura for flying avatars
-    if (m_spellInfo->Id == 81073 && target && target->IsPlayer())
-    {					
-        Player* player = target->ToPlayer();
-        AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(player->GetAreaId());
-        if (!areaEntry)
-            areaEntry = sAreaTableStore.LookupEntry(player->GetMapId());
-        if (apply && (!areaEntry || !areaEntry->IsFlyable() || (areaEntry->flags & AREA_FLAG_NO_FLY_ZONE) != 0 || !player->canFlyInZone(player->GetAreaId(), player->GetMapId(), m_spellInfo)))
-        {
-            apply = !apply;
-            player->RemoveAurasDueToSpell(m_spellInfo->Id);
-        }                
-    }
-	
-	if (!apply)
+
+    if (!apply)
     {
         // do not remove unit flag if there are more than this auraEffect of that kind on unit on unit
         if (target->HasAuraType(GetAuraType()) || target->HasAuraType(SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED))
@@ -3339,7 +3307,7 @@ void AuraEffect::HandleAuraModIncreaseFlightSpeed(AuraApplication const* aurApp,
     //! Update ability to fly
     if (GetAuraType() == SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED)
     {
-		// do not remove unit flag if there are more than this auraEffect of that kind on unit on unit
+        // do not remove unit flag if there are more than this auraEffect of that kind on unit on unit
         if (mode & AURA_EFFECT_HANDLE_SEND_FOR_CLIENT_MASK && (apply || (!target->HasAuraType(SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED) && !target->HasAuraType(SPELL_AURA_FLY))))
         {
             target->SetCanFly(apply);
