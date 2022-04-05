@@ -89,10 +89,10 @@ public:
             HasYelled = false;
             _introDone = false;
             _burningAdrenalineCast = 0;
-            me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-            me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
+            me->SetNpcFlag(UNIT_NPC_FLAG_GOSSIP);
+            me->SetNpcFlag(UNIT_NPC_FLAG_QUESTGIVER);
             me->SetFaction(FACTION_FRIENDLY);
-            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->RemoveUnitFlag(UNIT_FLAG_NOT_SELECTABLE);
         }
 
         void Reset() override
@@ -132,7 +132,7 @@ public:
         void BeginSpeech(Unit* target)
         {
             PlayerGUID = target->GetGUID();
-            me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+            me->RemoveNpcFlag(UNIT_NPC_FLAG_GOSSIP);
             _eventsIntro.ScheduleEvent(EVENT_SPEECH_1, 1000);
         }
 
@@ -160,7 +160,7 @@ public:
                             me->SetStandState(UNIT_STAND_STATE_STAND);
                             me->SummonCreature(NPC_VICTOR_NEFARIUS, aNefariusSpawnLoc[0], aNefariusSpawnLoc[1], aNefariusSpawnLoc[2], aNefariusSpawnLoc[3], TEMPSUMMON_TIMED_DESPAWN, 26000);
                             _eventsIntro.ScheduleEvent(EVENT_SPEECH_2, 1000);
-                            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                            me->SetUnitFlag(UNIT_FLAG_NOT_SELECTABLE);
                             break;
                         case EVENT_SPEECH_2:
                             if (Creature* nefarius = me->GetMap()->GetCreature(m_nefariusGuid))
@@ -190,7 +190,7 @@ public:
                             Talk(SAY_LINE3);
                             me->HandleEmoteCommand(EMOTE_ONESHOT_TALK);
                             _eventsIntro.ScheduleEvent(EVENT_SPEECH_7, 17000);
-                            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                            me->RemoveUnitFlag(UNIT_FLAG_NOT_SELECTABLE);
                             break;
                         case EVENT_SPEECH_7:
                             me->SetFaction(FACTION_DRAGONFLIGHT_BLACK);
@@ -265,7 +265,7 @@ public:
             if (summoned->GetEntry() == NPC_VICTOR_NEFARIUS)
             {
                 // Set not selectable, so players won't interact with it
-                summoned->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                summoned->SetUnitFlag(UNIT_FLAG_NOT_SELECTABLE);
                 m_nefariusGuid = summoned->GetGUID();
             }
         }

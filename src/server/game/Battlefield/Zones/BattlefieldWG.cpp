@@ -225,7 +225,7 @@ void BattlefieldWG::OnBattleStart()
         // Update faction of relic, only attacker can click on
         go->SetUInt32Value(GAMEOBJECT_FACTION, WintergraspFaction[GetAttackerTeam()]);
         // Set in use (not allow to click on before last door is broken)
-        go->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_NOT_SELECTABLE);
+        go->SetGameObjectFlag(GO_FLAG_NOT_SELECTABLE);
 
         // save guid
         m_titansRelic = go->GetGUID();
@@ -718,7 +718,7 @@ void BattlefieldWG::HandleKill(Player* killer, Unit* victim)
 
         // Xinef: Allow to Skin non-released corpse
         if (victim->GetTypeId() == TYPEID_PLAYER)
-            victim->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
+            victim->SetUnitFlag(UNIT_FLAG_SKINNABLE);
     }
     else if (victim->IsVehicle() && !killer->IsFriendlyTo(victim))
     {

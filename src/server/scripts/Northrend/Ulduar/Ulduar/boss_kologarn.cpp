@@ -235,7 +235,7 @@ public:
             _looksAchievement = true;
 
             me->SetDisableGravity(true);
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+            me->SetUnitFlag(UNIT_FLAG_DISABLE_MOVE);
             me->DisableRotate(true);
 
             events.Reset();
@@ -318,7 +318,7 @@ public:
             {
                 me->RemoveGameObject(go, false);
                 go->SetSpellId(1); // hack to make it despawn
-                go->SetUInt32Value(GAMEOBJECT_FLAGS, 0);
+                go->ReplaceAllGameObjectFlags((GameObjectFlags)0);
                 go->SetLootRecipient(me);
             }
             if (Creature* arm = ObjectAccessor::GetCreature(*me, _left))
