@@ -18633,8 +18633,16 @@ uint32 Unit::GetModelForForm(ShapeshiftForm form) const
         switch (form)
         {
             case FORM_CAT:
+                if (HasAura(81154))
+                    return 33026;   // Grâce du rêve (Bleu)
+                else if (HasAura(81155))
+                    return 33034;   // Grâce du rêve (Vert)
+                else if (HasAura(81156))
+                    return 33050;   // Grâce du rêve (Violet)
+                else if (HasAura(81157))
+                    return 33051;   // Grâce du rêve (Rouge)
                 // Based on Hair color
-                if (getRace() == RACE_NIGHTELF)
+                else if (getRace() == RACE_NIGHTELF)
                 {
                     uint8 hairColor = GetByteValue(PLAYER_BYTES, 3);
                     switch (hairColor)
@@ -18798,6 +18806,20 @@ uint32 Unit::GetModelForForm(ShapeshiftForm form) const
                 if (Player::TeamIdForRace(getRace()) == TEAM_ALLIANCE)
                     return 21243;
                 return 21244;
+            case FORM_GHOSTWOLF:
+                switch (getRace())
+                {
+                    case RACE_DRAENEI:
+                        return 33043;
+                    case RACE_ORC:
+                        return 33094;
+                    case RACE_TROLL:
+                        return 33093;
+                    case RACE_TAUREN:
+                        return 33095;
+                    default:
+                        return 33095;
+                }
             default:
                 break;
         }
