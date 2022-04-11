@@ -18806,6 +18806,20 @@ uint32 Unit::GetModelForForm(ShapeshiftForm form) const
                 if (Player::TeamIdForRace(getRace()) == TEAM_ALLIANCE)
                     return 21243;
                 return 21244;
+            case FORM_GHOSTWOLF:
+                switch (getRace())
+                {
+                    case RACE_DRAENEI:
+                        return 33043;
+                    case RACE_ORC:
+                        return 33094;
+                    case RACE_TROLL:
+                        return 33093;
+                    case RACE_TAUREN:
+                        return 33095;
+                    default:
+                        return 33095;
+                }
             default:
                 break;
         }
