@@ -1344,6 +1344,7 @@ public:
     bool IsWithinCombatRange(Unit const* obj, float dist2compare) const;
     bool IsWithinMeleeRange(Unit const* obj, float dist = 0.f) const;
     float GetMeleeRange(Unit const* target) const;
+    [[nodiscard]] virtual SpellSchoolMask GetMeleeDamageSchoolMask() const;
     bool GetRandomContactPoint(Unit const* target, float& x, float& y, float& z, bool force = false) const;
     uint32 m_extraAttacks;
     bool m_canDualWield;
@@ -1360,6 +1361,9 @@ public:
     {
         if (GetVictim() != nullptr)
             return GetVictim();
+
+        if (!IsEngaged())
+            return nullptr;
 
         if (!m_attackers.empty())
             return *(m_attackers.begin());
@@ -1660,6 +1664,9 @@ public:
     [[nodiscard]] bool IsCritter() const { return GetCreatureType() == CREATURE_TYPE_CRITTER; }
 
     [[nodiscard]] bool IsInFlight()  const { return HasUnitState(UNIT_STATE_IN_FLIGHT); }
+
+    bool IsEngaged() const { return IsInCombat(); }
+    bool IsEngagedBy(Unit const* who) const { return IsInCombatWith(who); }
 
     [[nodiscard]] bool IsInCombat() const { return HasUnitFlag(UNIT_FLAG_IN_COMBAT); }
     bool IsInCombatWith(Unit const* who) const;
@@ -2121,6 +2128,7 @@ public:
     void TauntApply(Unit* victim);
     void TauntFadeOut(Unit* taunter);
     ThreatMgr& GetThreatMgr() { return m_ThreatMgr; }
+    ThreatMgr const& GetThreatMgr() const { return m_ThreatMgr; }
     void addHatedBy(HostileReference* pHostileReference) { m_HostileRefMgr.insertFirst(pHostileReference); };
     void removeHatedBy(HostileReference* /*pHostileReference*/) { /* nothing to do yet */ }
     HostileRefMgr& getHostileRefMgr() { return m_HostileRefMgr; }
@@ -2490,8 +2498,6 @@ protected:
 
     CharmInfo* m_charmInfo;
     SharedVisionList m_sharedVision;
-
-    [[nodiscard]] virtual SpellSchoolMask GetMeleeDamageSchoolMask() const;
 
     MotionMaster* i_motionMaster;
 
