@@ -1931,6 +1931,10 @@ void AuraEffect::HandleAuraModShapeshift(AuraApplication const* aurApp, uint8 mo
             case FORM_FLIGHT:
             case FORM_MOONKIN:
                 {
+                    if (Player* player = target->ToPlayer())
+                    {
+                        player->SetCanTeleport(true);
+                    }
                     // remove movement affects
                     target->RemoveAurasByShapeShift();
 
@@ -6414,8 +6418,8 @@ void AuraEffect::HandlePeriodicDamageAurasTick(Unit* target, Unit* caster) const
     target->SendPeriodicAuraLog(&pInfo);
 
     Unit::DealDamage(caster, target, damage, &cleanDamage, DOT, GetSpellInfo()->GetSchoolMask(), GetSpellInfo(), true);
-    // allow null caster to call this function
-    caster->ProcDamageAndSpell(target, caster ? procAttacker : 0, procVictim, procEx, damage, BASE_ATTACK, GetSpellInfo(), nullptr, GetEffIndex(), nullptr, &dmgInfo);
+
+    Unit::ProcDamageAndSpell(caster, target, caster ? procAttacker : 0, procVictim, procEx, damage, BASE_ATTACK, GetSpellInfo(), nullptr, GetEffIndex(), nullptr, &dmgInfo);
 }
 
 void AuraEffect::HandlePeriodicHealthLeechAuraTick(Unit* target, Unit* caster) const
@@ -6503,8 +6507,8 @@ void AuraEffect::HandlePeriodicHealthLeechAuraTick(Unit* target, Unit* caster) c
     int32 new_damage;
 
     new_damage = Unit::DealDamage(caster, target, damage, &cleanDamage, DOT, GetSpellInfo()->GetSchoolMask(), GetSpellInfo(), false);
-    // allow null caster to call this function
-    caster->ProcDamageAndSpell(target, caster ? procAttacker : 0, procVictim, procEx, damage, BASE_ATTACK, GetSpellInfo(), nullptr, GetEffIndex(), nullptr, &dmgInfo);
+
+    Unit::ProcDamageAndSpell(caster, target, caster ? procAttacker : 0, procVictim, procEx, damage, BASE_ATTACK, GetSpellInfo(), nullptr, GetEffIndex(), nullptr, &dmgInfo);
 
     if (!caster || !caster->IsAlive())
         return;
@@ -6686,8 +6690,7 @@ void AuraEffect::HandlePeriodicHealAurasTick(Unit* target, Unit* caster) const
 
     // ignore item heals
     if (!haveCastItem && GetAuraType() != SPELL_AURA_OBS_MOD_HEALTH) // xinef: dont allow obs_mod_health to proc spells, this is passive regeneration and not hot
-        // xinef: allow null caster to proc
-        caster->ProcDamageAndSpell(target, caster ? procAttacker : 0, procVictim, procEx, heal, BASE_ATTACK, GetSpellInfo(), nullptr, GetEffIndex(), nullptr, nullptr, &healInfo);
+        Unit::ProcDamageAndSpell(caster, target, caster ? procAttacker : 0, procVictim, procEx, heal, BASE_ATTACK, GetSpellInfo(), nullptr, GetEffIndex(), nullptr, nullptr, &healInfo);
 }
 
 void AuraEffect::HandlePeriodicManaLeechAuraTick(Unit* target, Unit* caster) const
@@ -6875,7 +6878,7 @@ void AuraEffect::HandlePeriodicPowerBurnAuraTick(Unit* target, Unit* caster) con
     caster->DealSpellDamage(&damageInfo, true);
 
     DamageInfo dmgInfo(damageInfo, DOT);
-    caster->ProcDamageAndSpell(damageInfo.target, procAttacker, procVictim, procEx, damageInfo.damage, BASE_ATTACK, spellProto, nullptr, GetEffIndex(), nullptr, &dmgInfo);
+    Unit::ProcDamageAndSpell(caster, damageInfo.target, procAttacker, procVictim, procEx, damageInfo.damage, BASE_ATTACK, spellProto, nullptr, GetEffIndex(), nullptr, &dmgInfo);
 }
 
 void AuraEffect::HandleProcTriggerSpellAuraProc(AuraApplication* aurApp, ProcEventInfo& eventInfo)
