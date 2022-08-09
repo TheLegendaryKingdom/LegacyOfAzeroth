@@ -77,12 +77,9 @@ Position CrystalCoordinates[NUM_CRYSTALS] =
     { -9406.73f,     1863.13f,     85.5558f,   0.0f }
 };
 
-float roomRadius = 165.0f;
-uint8 const NUM_TORNADOS = 2;
 uint8 const NUM_WEAKNESS = 5;
 uint32 const spellWeakness[NUM_WEAKNESS] =
 { SPELL_FIRE_WEAKNESS, SPELL_FROST_WEAKNESS, SPELL_NATURE_WEAKNESS, SPELL_ARCANE_WEAKNESS, SPELL_SHADOW_WEAKNESS };
-Position const RoomCenter = { -9343.041992f, 1923.278198f, 85.555984f, 0.0 };
 
 struct boss_ossirian : public BossAI
 {
@@ -142,14 +139,7 @@ struct boss_ossirian : public BossAI
 
         WorldPackets::Misc::Weather weather(WEATHER_STATE_HEAVY_SANDSTORM, 1.0f);
         map->SendToPlayers(weather.Write());
-        for (uint8 i = 0; i < NUM_TORNADOS; ++i)
-        {
-            Position Point = me->GetRandomPoint(RoomCenter, roomRadius);
-            if (Creature* Tornado = me->GetMap()->SummonCreature(NPC_SAND_VORTEX, Point))
-            {
-                Tornado->CastSpell(Tornado, SPELL_SAND_STORM, true);
-            }
-        }
+
         SpawnNextCrystal();
     }
 
@@ -284,14 +274,14 @@ public:
     {
         InstanceScript* instance = player->GetInstanceScript();
         if (!instance)
-            return false;
+            return true;
 
         Creature* ossirian = instance->GetCreature(DATA_OSSIRIAN);
         if (!ossirian || instance->GetBossState(DATA_OSSIRIAN) != IN_PROGRESS)
-            return false;
+            return true;
 
         ossirian->AI()->DoAction(ACTION_TRIGGER_WEAKNESS);
-        return true;
+        return false;
     }
 };
 
