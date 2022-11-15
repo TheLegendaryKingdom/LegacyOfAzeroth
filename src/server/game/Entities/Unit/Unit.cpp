@@ -19983,7 +19983,8 @@ void Unit::BuildMovementPacket(ByteBuffer* data) const
 
 bool Unit::IsFalling() const
 {
-    return m_movementInfo.HasMovementFlag(MOVEMENTFLAG_FALLING | MOVEMENTFLAG_FALLING_FAR) || movespline->isFalling();
+    return m_movementInfo.HasMovementFlag(MOVEMENTFLAG_FALLING | MOVEMENTFLAG_FALLING_FAR) ||
+        (!movespline->Finalized() && movespline->Initialized() && movespline->isFalling());
 }
 
 /**
